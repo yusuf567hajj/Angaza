@@ -1,0 +1,1706 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Angaza — monetize your exclusive content in one payment</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            display: ['Space Grotesk', 'Plus Jakarta Sans', 'sans-serif'],
+          },
+          colors: {
+            obsidian: '#0B0B0F',
+            charcoal: '#14141C',
+            cardSurface: '#1B1B26',
+            sunlit: '#F59E0B',
+            radiant: '#FBBF24',
+            mpesa: '#10B981',
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #0B0B0F;
+      color: #F8FAFC;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    h1, h2, h3, h4, .font-display {
+      font-family: 'Space Grotesk', 'Plus Jakarta Sans', sans-serif;
+    }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0B0B0F;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #282838;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #F59E0B;
+    }
+
+    /* Range Sliders */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      background: #232332;
+      height: 7px;
+      border-radius: 999px;
+      outline: none;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #FBBF24;
+      cursor: pointer;
+      border: 3px solid #0B0B0F;
+      box-shadow: 0 0 14px rgba(245, 158, 11, 0.7);
+      transition: transform 0.15s ease;
+    }
+    input[type="range"]::-webkit-slider-thumb:hover {
+      transform: scale(1.12);
+    }
+
+    .glass-nav {
+      background: rgba(11, 11, 15, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+
+    .sunlit-glow {
+      box-shadow: 0 0 48px -12px rgba(245, 158, 11, 0.25);
+    }
+
+    .mpesa-glow {
+      box-shadow: 0 0 40px -10px rgba(16, 185, 129, 0.28);
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Safe Modal State Visibility (Never blocks clicks when hidden) */
+    .modal-shell {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+    .modal-shell.is-open {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+  </style>
+</head>
+<body class="antialiased selection:bg-sunlit selection:text-obsidian">
+
+  <!-- Toast Notification Container (Pointer-events-none wrapper, auto on individual toasts) -->
+  <div id="toast-container" class="fixed bottom-4 right-4 left-4 sm:left-auto z-50 flex flex-col gap-2.5 sm:max-w-sm pointer-events-none"></div>
+
+  <!-- ===================================================================== -->
+  <!-- TOP STICKY NAVIGATION BAR                                             -->
+  <!-- ===================================================================== -->
+  <header class="sticky top-0 z-40 glass-nav border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 sm:h-20 gap-2">
+
+        <!-- Brand Mark & Wordmark -->
+        <button type="button" data-action="switch-view" data-view="explore" class="flex items-center gap-2.5 sm:gap-3 group text-left shrink-0 cursor-pointer">
+          <div class="relative w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-radiant via-sunlit to-amber-700 p-[1.5px] shadow-lg shadow-sunlit/25 group-hover:scale-105 transition-transform">
+            <div class="w-full h-full bg-obsidian rounded-[14px] flex items-center justify-center relative overflow-hidden">
+              <!-- Glowing Sunburst Prism SVG Logo -->
+              <svg viewBox="0 0 36 36" class="w-7 h-7 pointer-events-none" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="18" cy="18" r="6.5" fill="url(#angazaSunGrad)" />
+                <path d="M18 3.5V7.5M18 28.5V32.5M3.5 18H7.5M28.5 18H32.5M7.75 7.75L10.6 10.6M25.4 25.4L28.25 28.25M28.25 7.75L25.4 10.6M10.6 25.4L7.75 28.25" stroke="#FBBF24" stroke-width="2.2" stroke-linecap="round" />
+                <polygon points="16,14.5 22.5,18 16,21.5" fill="#0B0B0F" />
+                <defs>
+                  <linearGradient id="angazaSunGrad" x1="11.5" y1="11.5" x2="24.5" y2="24.5" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#FDE68A" />
+                    <stop offset="0.5" stop-color="#FBBF24" />
+                    <stop offset="1" stop-color="#D97706" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="font-display font-bold text-xl sm:text-2xl tracking-tight text-white">Angaza</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-radiant"></span>
+            </div>
+            <p class="text-[10px] uppercase tracking-[0.18em] text-amber-300/80 hidden sm:block">One Payment • Own Forever</p>
+          </div>
+        </button>
+
+        <!-- Desktop View Navigation Tabs -->
+        <nav class="hidden md:flex items-center bg-charcoal border border-white/10 rounded-2xl p-1" aria-label="Primary Navigation">
+          <button type="button" id="tab-explore" data-action="switch-view" data-view="explore" class="px-4 py-2 rounded-xl text-sm font-extrabold bg-sunlit text-obsidian transition-all cursor-pointer">
+            Explore Exclusive Drops
+          </button>
+          <button type="button" id="tab-studio" data-action="switch-view" data-view="studio" class="px-4 py-2 rounded-xl text-sm font-bold text-slate-300 hover:text-white transition-all cursor-pointer">
+            Creator Studio
+          </button>
+        </nav>
+
+        <!-- Right Controls: Currency Switcher + Publish Drop Button -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <!-- KES / USD Currency Toggle -->
+          <div class="bg-charcoal border border-white/10 rounded-xl p-1 flex items-center text-xs font-extrabold" role="group" aria-label="Currency Toggle">
+            <button type="button" id="curr-btn-KES" data-action="set-currency" data-currency="KES" class="px-2.5 py-1.5 rounded-lg bg-radiant text-obsidian transition-all cursor-pointer">
+              KES
+            </button>
+            <button type="button" id="curr-btn-USD" data-action="set-currency" data-currency="USD" class="px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white transition-all cursor-pointer">
+              USD
+            </button>
+          </div>
+
+          <!-- + Publish Drop CTA -->
+          <button type="button" data-action="go-publish" class="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-xs sm:text-sm font-extrabold bg-gradient-to-r from-radiant to-sunlit text-obsidian hover:brightness-110 active:scale-[0.98] transition-all shadow-lg shadow-sunlit/25 cursor-pointer">
+            <span class="text-base leading-none font-black">+</span>
+            <span>Publish Drop</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile Sub-Bar Navigation Tabs -->
+      <div class="flex md:hidden items-center gap-2 pb-3">
+        <button type="button" id="mob-tab-explore" data-action="switch-view" data-view="explore" class="flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-sunlit text-obsidian text-center transition-all cursor-pointer">
+          Explore Exclusive Drops
+        </button>
+        <button type="button" id="mob-tab-studio" data-action="switch-view" data-view="studio" class="flex-1 py-2.5 rounded-xl text-xs font-bold bg-charcoal text-slate-300 border border-white/10 text-center transition-all cursor-pointer">
+          Creator Studio
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================== -->
+  <!-- VIEW 1: EXPLORE EXCLUSIVE DROPS & HERO                                -->
+  <!-- ===================================================================== -->
+  <main id="view-explore">
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-8 pb-14 sm:pt-14 sm:pb-20 overflow-hidden">
+      <div class="absolute -top-24 -left-24 w-96 h-96 bg-sunlit/15 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="absolute top-28 -right-24 w-96 h-96 bg-mpesa/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+
+          <!-- Left Column: Brand Value Proposition -->
+          <div class="lg:col-span-6 space-y-5 text-center lg:text-left">
+            <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-charcoal border border-sunlit/30 text-radiant text-xs font-bold">
+              <span class="w-2 h-2 rounded-full bg-radiant animate-pulse"></span>
+              <span>One Payment • Lifetime Access • Zero Subscriptions</span>
+            </div>
+
+            <h1 class="text-3xl sm:text-5xl lg:text-[3.3rem] font-extrabold tracking-tight leading-[1.1] text-white">
+              Angaza — <span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-radiant to-sunlit">monetize your exclusive content in one payment</span>
+            </h1>
+
+            <p class="text-sm sm:text-lg text-slate-300 leading-relaxed max-w-2xl mx-auto lg:mx-0">
+              Let fans unlock your masterclasses, concert sets, comedy specials, and documentaries in a single tap. Instant M-Pesa Express STK Push &amp; global card checkout—with <strong class="text-white">95% paid straight to you</strong>.
+            </p>
+
+            <!-- Value Badges -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+              <div class="bg-charcoal/90 border border-white/10 rounded-2xl p-3 text-left">
+                <p class="text-radiant font-extrabold text-base">95%</p>
+                <p class="text-[11px] text-slate-400">Creator Take-Home</p>
+              </div>
+              <div class="bg-charcoal/90 border border-white/10 rounded-2xl p-3 text-left">
+                <p class="text-mpesa font-extrabold text-base">1-Tap</p>
+                <p class="text-[11px] text-slate-400">M-Pesa STK Push</p>
+              </div>
+              <div class="bg-charcoal/90 border border-white/10 rounded-2xl p-3 text-left">
+                <p class="text-white font-extrabold text-base">Pay Once</p>
+                <p class="text-[11px] text-slate-400">Own Forever</p>
+              </div>
+              <div class="bg-charcoal/90 border border-white/10 rounded-2xl p-3 text-left">
+                <p class="text-amber-300 font-extrabold text-base">Instant</p>
+                <p class="text-[11px] text-slate-400">Mobile Payouts</p>
+              </div>
+            </div>
+
+            <!-- Hero Action Buttons -->
+            <div class="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3.5 pt-2">
+              <button type="button" data-action="go-publish" class="w-full sm:w-auto px-7 py-4 rounded-2xl bg-gradient-to-r from-radiant to-sunlit text-obsidian font-extrabold text-sm sm:text-base hover:brightness-110 active:scale-[0.98] transition-all shadow-xl shadow-sunlit/25 cursor-pointer">
+                Start Monetizing Free →
+              </button>
+              <button type="button" data-action="scroll-catalog" class="w-full sm:w-auto px-7 py-4 rounded-2xl bg-charcoal hover:bg-cardSurface border border-white/15 text-white font-bold text-sm sm:text-base transition-all cursor-pointer">
+                Browse Exclusive Drops
+              </button>
+            </div>
+          </div>
+
+          <!-- Right Column: Interactive One-Payment Revenue Simulator -->
+          <div class="lg:col-span-6">
+            <div class="bg-charcoal/95 border border-sunlit/25 rounded-3xl p-5 sm:p-8 sunlit-glow relative overflow-hidden">
+              <div class="flex items-center justify-between gap-2 mb-5">
+                <div>
+                  <span class="text-[11px] font-bold uppercase tracking-widest text-radiant">Live Creator Calculator</span>
+                  <h2 class="text-lg sm:text-2xl font-extrabold text-white mt-0.5">One-Payment Revenue Simulator</h2>
+                </div>
+                <span class="px-3 py-1 rounded-xl bg-mpesa/15 border border-mpesa/30 text-xs font-extrabold text-mpesa shrink-0">
+                  95% Net Share
+                </span>
+              </div>
+
+              <div class="space-y-5">
+                <!-- Supporters Slider -->
+                <div>
+                  <div class="flex justify-between text-xs sm:text-sm font-semibold mb-2">
+                    <label for="sim-buyers" class="text-slate-300">Single-Payment Supporters</label>
+                    <span id="sim-buyers-label" class="text-radiant font-extrabold">650 supporters</span>
+                  </div>
+                  <input id="sim-buyers" type="range" min="25" max="5000" step="25" value="650" class="w-full" />
+                  <div class="flex justify-between text-[11px] text-slate-500 mt-1">
+                    <span>25 fans</span>
+                    <span>2,500 fans</span>
+                    <span>5,000 fans</span>
+                  </div>
+                </div>
+
+                <!-- Drop Price Slider -->
+                <div>
+                  <div class="flex justify-between text-xs sm:text-sm font-semibold mb-2">
+                    <label for="sim-price" class="text-slate-300">One-Time Drop Price</label>
+                    <span id="sim-price-label" class="text-radiant font-extrabold">KES 500</span>
+                  </div>
+                  <input id="sim-price" type="range" min="100" max="5000" step="50" value="500" class="w-full" />
+                  <div class="flex justify-between text-[11px] text-slate-500 mt-1">
+                    <span id="sim-min-hint">KES 100</span>
+                    <span id="sim-mid-hint">KES 2,500</span>
+                    <span id="sim-max-hint">KES 5,000</span>
+                  </div>
+                </div>
+
+                <!-- Gross & Fee Summary -->
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="bg-obsidian/90 border border-white/10 rounded-2xl p-3.5 sm:p-4">
+                    <p class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Gross Drop Sales</p>
+                    <p id="sim-gross" class="text-base sm:text-xl font-extrabold text-white mt-1">KES 325,000</p>
+                  </div>
+                  <div class="bg-obsidian/90 border border-white/10 rounded-2xl p-3.5 sm:p-4">
+                    <p class="text-[11px] uppercase tracking-wider text-slate-400 font-semibold">Angaza Fee (5%)</p>
+                    <p id="sim-fee" class="text-base sm:text-xl font-extrabold text-slate-400 mt-1">- KES 16,250</p>
+                  </div>
+                </div>
+
+                <!-- Net Take-Home Card -->
+                <div class="bg-gradient-to-r from-obsidian via-obsidian to-amber-950/35 border border-radiant/40 rounded-2xl p-4 sm:p-5">
+                  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div>
+                      <p class="text-xs uppercase tracking-wider text-amber-300/90 font-bold">Your Net Payout (95%)</p>
+                      <p id="sim-net" class="text-2xl sm:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-radiant to-mpesa mt-1">
+                        KES 308,750
+                      </p>
+                      <p class="text-[11px] text-slate-400 mt-1">Instant withdrawal to M-Pesa, Airtel Money or Bank</p>
+                    </div>
+                    <button type="button" data-action="go-publish" class="shrink-0 px-4 py-3 rounded-xl bg-radiant hover:bg-amber-300 text-obsidian text-xs font-extrabold transition-all cursor-pointer">
+                      Create Drop →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
+    <!-- EXCLUSIVE DROPS MARKETPLACE                                         -->
+    <!-- =================================================================== -->
+    <section id="drops-marketplace" class="py-12 sm:py-16 border-t border-white/10 bg-charcoal/35">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <!-- Title + Search Input -->
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+          <div>
+            <span class="text-xs font-bold uppercase tracking-widest text-radiant">Pay Once • Lifetime HD Access</span>
+            <h2 class="text-2xl sm:text-4xl font-extrabold text-white mt-1">Explore Exclusive Drops</h2>
+            <p class="text-slate-400 text-xs sm:text-sm mt-1">
+              Click any locked drop to test 1-tap M-Pesa Express unlock, or click an unlocked drop to stream immediately.
+            </p>
+          </div>
+
+          <div class="w-full md:w-80">
+            <input id="drops-search" type="search" placeholder="Search drops, creators, topics..." class="w-full bg-charcoal border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-400 focus:outline-none focus:border-radiant" />
+          </div>
+        </div>
+
+        <!-- Category Filter Pills -->
+        <div id="category-pills" class="flex items-center gap-2 overflow-x-auto pb-3 mb-6 no-scrollbar"></div>
+
+        <!-- Responsive Drops Grid -->
+        <div id="drops-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===================================================================== -->
+  <!-- VIEW 2: CREATOR STUDIO & THUMBNAIL UPLOADER                           -->
+  <!-- ===================================================================== -->
+  <section id="view-studio" class="hidden py-8 sm:py-12 min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- Studio Header -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-white/10">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="px-2.5 py-0.5 rounded-md bg-radiant/20 text-radiant text-xs font-extrabold uppercase">Creator Studio</span>
+            <span class="text-xs text-slate-400">@AngazaOriginals • Verified</span>
+          </div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-1">Revenue, Payouts &amp; Drop Publisher</h1>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button type="button" data-action="withdraw-mpesa" class="px-4 py-2.5 rounded-xl bg-mpesa hover:bg-emerald-400 active:scale-[0.98] text-obsidian font-extrabold text-xs sm:text-sm transition-all shadow-lg shadow-mpesa/25 cursor-pointer">
+            Withdraw to M-Pesa
+          </button>
+          <button type="button" data-action="switch-view" data-view="explore" class="px-4 py-2.5 rounded-xl bg-charcoal hover:bg-cardSurface border border-white/15 text-xs sm:text-sm font-bold text-white transition-all cursor-pointer">
+            ← Explore Drops
+          </button>
+        </div>
+      </div>
+
+      <!-- 4 KPI Cards -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
+        <div class="bg-charcoal border border-white/10 rounded-3xl p-5">
+          <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Total Net Revenue (95%)</p>
+          <p id="kpi-total-revenue" class="text-2xl sm:text-3xl font-extrabold text-white mt-2">KES 482,500</p>
+          <span class="inline-block mt-1.5 text-xs font-bold text-mpesa">+24.6% this month</span>
+        </div>
+
+        <div class="bg-charcoal border border-white/10 rounded-3xl p-5">
+          <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Lifetime Supporters</p>
+          <p id="kpi-buyers" class="text-2xl sm:text-3xl font-extrabold text-white mt-2">1,148</p>
+          <span class="inline-block mt-1.5 text-xs text-slate-400">Single-payment owners</span>
+        </div>
+
+        <div class="bg-charcoal border border-white/10 rounded-3xl p-5">
+          <p class="text-slate-400 text-xs font-bold uppercase tracking-wider">Unlock Conversion</p>
+          <p class="text-2xl sm:text-3xl font-extrabold text-radiant mt-2">14.8%</p>
+          <span class="inline-block mt-1.5 text-xs text-slate-400">3.4× higher than monthly subs</span>
+        </div>
+
+        <div class="bg-gradient-to-br from-charcoal to-emerald-950/40 border border-mpesa/40 rounded-3xl p-5 mpesa-glow">
+          <p class="text-emerald-300 text-xs font-bold uppercase tracking-wider">Available M-Pesa Balance</p>
+          <p id="kpi-available-balance" class="text-2xl sm:text-3xl font-extrabold text-mpesa mt-2">KES 164,350</p>
+          <button type="button" data-action="withdraw-mpesa" class="mt-1.5 text-xs font-extrabold text-white underline hover:text-radiant cursor-pointer">
+            Instant STK Payout Ready →
+          </button>
+        </div>
+      </div>
+
+      <!-- Studio Main Grid: Chart + Publish New Drop Form -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-8">
+
+        <!-- Left 7 Cols: 7-Day Revenue Bar Chart & Transactions Ledger -->
+        <div class="lg:col-span-7 bg-charcoal border border-white/10 rounded-3xl p-5 sm:p-7 flex flex-col justify-between">
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-5">
+              <div>
+                <h2 class="text-lg sm:text-xl font-extrabold text-white">7-Day One-Payment Revenue</h2>
+                <p class="text-xs text-slate-400">Updates live whenever fans unlock a drop or send a tip</p>
+              </div>
+              <span class="px-3 py-1 rounded-xl bg-radiant/15 text-radiant text-xs font-bold">Live Ledger</span>
+            </div>
+
+            <div id="studio-revenue-chart" class="grid grid-cols-7 gap-2 sm:gap-3 items-end h-56 pt-8 pb-3 px-2.5 bg-obsidian/80 rounded-2xl border border-white/5"></div>
+          </div>
+
+          <div class="mt-6 pt-5 border-t border-white/10">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Recent M-Pesa &amp; Drop Transactions</h3>
+              <span class="text-xs text-mpesa font-semibold">0% Withdrawal Fee</span>
+            </div>
+            <div id="payout-receipts-list" class="space-y-2 text-xs"></div>
+          </div>
+        </div>
+
+        <!-- Right 5 Cols: Publish New Exclusive Drop Form with Thumbnail Uploader -->
+        <div id="publish-drop-card" class="lg:col-span-5 bg-charcoal border border-sunlit/30 rounded-3xl p-5 sm:p-7 sunlit-glow">
+          <div class="text-radiant text-xs font-extrabold uppercase tracking-wider mb-1">
+            ✦ Instant Monetization
+          </div>
+          <h2 class="text-xl font-extrabold text-white mb-1">Publish New Exclusive Drop</h2>
+          <p class="text-xs text-slate-400 mb-5">Your drop goes live immediately in the Explore Exclusive Drops feed.</p>
+
+          <form id="publishForm" class="space-y-4">
+            <div>
+              <label for="drop-title-input" class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Drop Title</label>
+              <input id="drop-title-input" type="text" required placeholder="e.g., Nairobi rooftop Afro-House Live Set (4K)" class="w-full bg-obsidian border border-white/15 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-radiant" />
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+              <div>
+                <label for="drop-category-input" class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Category</label>
+                <select id="drop-category-input" class="w-full bg-obsidian border border-white/15 rounded-xl px-3.5 py-3 text-sm text-white focus:outline-none focus:border-radiant">
+                  <option value="Masterclasses & Tech">Masterclasses &amp; Tech</option>
+                  <option value="Music & Live Sets">Music &amp; Live Sets</option>
+                  <option value="Comedy & Storytelling">Comedy &amp; Storytelling</option>
+                  <option value="Film & Docs">Film &amp; Docs</option>
+                  <option value="Podcasts & Exclusive">Podcasts &amp; Exclusive</option>
+                </select>
+              </div>
+
+              <div>
+                <label for="drop-price-input" class="block text-xs font-bold uppercase text-slate-300 mb-1.5">One-Time Price (KES)</label>
+                <input id="drop-price-input" type="number" min="50" max="50000" step="50" value="450" required class="w-full bg-obsidian border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-radiant" />
+              </div>
+            </div>
+
+            <!-- Cover Thumbnail / Image Uploader -->
+            <div class="space-y-2.5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="block text-xs font-bold uppercase text-slate-300">Cover Thumbnail / Image</span>
+                <div class="flex items-center gap-1.5">
+                  <button type="button" data-action="apply-sample-cover" class="px-2.5 py-1.5 rounded-lg bg-radiant/15 hover:bg-radiant/25 border border-radiant/35 text-[11px] font-extrabold text-radiant transition-colors cursor-pointer">
+                    ✨ Sample Cover
+                  </button>
+                  <button type="button" data-action="toggle-url-input" class="px-2.5 py-1.5 rounded-lg bg-obsidian hover:bg-white/10 border border-white/15 text-[11px] font-bold text-slate-300 transition-colors cursor-pointer">
+                    Paste URL
+                  </button>
+                </div>
+              </div>
+
+              <!-- Hidden Native File Input -->
+              <input id="drop-thumbnail-file" type="file" accept="image/*" class="hidden" />
+
+              <!-- Drag & Drop / Tap Zone -->
+              <div id="thumbnail-dropzone" data-action="pick-cover-file" class="relative rounded-2xl border-2 border-dashed border-white/20 hover:border-radiant/60 bg-obsidian/95 transition-all cursor-pointer overflow-hidden">
+                <!-- Empty Prompt -->
+                <div id="thumbnail-empty-state" class="py-5 px-4 text-center space-y-1.5 pointer-events-none">
+                  <div class="w-10 h-10 rounded-2xl bg-radiant/15 text-radiant flex items-center justify-center mx-auto font-extrabold text-lg">
+                    +
+                  </div>
+                  <p class="text-xs sm:text-sm font-bold text-white">Tap to upload or drag &amp; drop cover image</p>
+                  <p class="text-[11px] text-slate-400">PNG, JPG, WEBP • Or tap "✨ Sample Cover" above</p>
+                </div>
+
+                <!-- Live 16:9 Preview Card -->
+                <div id="thumbnail-preview-state" class="hidden relative aspect-video w-full bg-obsidian">
+                  <img id="thumbnail-preview-img" src="" alt="Drop cover preview" class="w-full h-full object-cover" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-obsidian/90 via-obsidian/20 to-black/30 pointer-events-none"></div>
+
+                  <div class="absolute top-2.5 left-2.5 pointer-events-none">
+                    <span id="preview-price-badge" class="px-2.5 py-1 rounded-lg bg-radiant text-obsidian text-[11px] font-extrabold shadow">
+                      One-Time Unlock • KES 450
+                    </span>
+                  </div>
+
+                  <div class="absolute top-2.5 right-2.5 flex items-center gap-1.5">
+                    <button type="button" data-action="pick-cover-file" class="px-2.5 py-1 rounded-lg bg-obsidian/90 hover:bg-obsidian border border-white/25 text-[11px] font-bold text-white cursor-pointer">
+                      Change
+                    </button>
+                    <button type="button" data-action="clear-cover" class="px-2.5 py-1 rounded-lg bg-rose-950/90 hover:bg-rose-900 border border-rose-400/40 text-[11px] font-bold text-rose-200 cursor-pointer">
+                      Remove
+                    </button>
+                  </div>
+
+                  <div class="absolute bottom-2.5 left-3 right-3 pointer-events-none">
+                    <p id="preview-title-overlay" class="text-xs font-extrabold text-white truncate">Your Exclusive Drop Cover</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Toggleable Image URL Drawer -->
+              <div id="thumbnail-url-drawer" class="hidden pt-1">
+                <div class="flex items-center gap-2">
+                  <input id="drop-thumbnail-url" type="url" placeholder="https://images.unsplash.com/photo-..." class="flex-1 bg-obsidian border border-white/15 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-radiant" />
+                  <button type="button" data-action="close-url-input" class="px-3 py-2.5 rounded-xl bg-obsidian border border-white/15 text-xs font-bold text-slate-300 hover:text-white cursor-pointer">
+                    Done
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label for="drop-theme-input" class="block text-xs font-bold uppercase text-slate-300 mb-1.5">
+                Drop Artwork Palette <span class="text-slate-500 font-normal normal-case">(Used if no image uploaded)</span>
+              </label>
+              <select id="drop-theme-input" class="w-full bg-obsidian border border-white/15 rounded-xl px-3.5 py-3 text-sm text-white focus:outline-none focus:border-radiant">
+                <option value="gold">Angaza Sunlit Gold &amp; Obsidian</option>
+                <option value="savannah">Savannah Amber &amp; Terracotta</option>
+                <option value="emerald">Nairobi Night Emerald</option>
+                <option value="cobalt">Coastal Indigo &amp; Gold</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="drop-desc-input" class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Short Description</label>
+              <textarea id="drop-desc-input" rows="2" placeholder="What do buyers get when they unlock this exclusive drop?" class="w-full bg-obsidian border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-radiant"></textarea>
+            </div>
+
+            <button type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-radiant to-sunlit hover:brightness-110 active:scale-[0.99] text-obsidian font-extrabold text-sm transition-all shadow-lg shadow-sunlit/25 cursor-pointer">
+              Publish Exclusive Drop Live
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================================================================== -->
+  <!-- ONE-PAYMENT UNLOCK MODAL & HD CANVAS PLAYER MODAL                     -->
+  <!-- ===================================================================== -->
+  <div id="drop-modal" class="modal-shell fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 overflow-y-auto">
+    <div class="bg-charcoal border border-white/15 rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl my-auto">
+      <div class="flex items-center justify-between px-5 sm:px-6 py-4 border-b border-white/10 bg-obsidian/70 gap-3">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <span id="modal-status-badge" class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold uppercase shrink-0"></span>
+          <h3 id="modal-drop-title" class="font-extrabold text-white text-sm sm:text-lg truncate">Drop Title</h3>
+        </div>
+        <button type="button" data-action="close-drop-modal" class="w-9 h-9 rounded-xl bg-charcoal hover:bg-white/15 text-slate-200 font-bold flex items-center justify-center shrink-0 cursor-pointer" aria-label="Close modal">
+          ✕
+        </button>
+      </div>
+      <div id="modal-drop-body" class="p-5 sm:p-6"></div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- WITHDRAW TO M-PESA MODAL                                              -->
+  <!-- ===================================================================== -->
+  <div id="withdraw-modal" class="modal-shell fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
+    <div class="bg-charcoal border border-mpesa/45 rounded-3xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-4 border-b border-white/10">
+        <span class="text-mpesa font-extrabold text-base">Instant M-Pesa B2C Payout</span>
+        <button type="button" data-action="close-withdraw-modal" class="w-8 h-8 rounded-lg bg-obsidian text-slate-300 hover:text-white font-bold cursor-pointer">
+          ✕
+        </button>
+      </div>
+
+      <div class="py-5 space-y-4">
+        <div class="bg-obsidian border border-white/10 rounded-2xl p-4">
+          <p class="text-xs text-slate-400">Available Creator Balance (95% Net)</p>
+          <p id="withdraw-modal-balance" class="text-2xl font-black text-mpesa mt-1">KES 164,350</p>
+        </div>
+
+        <div>
+          <label for="withdraw-phone-input" class="block text-xs font-bold uppercase text-slate-300 mb-1.5">Safaricom M-Pesa Number</label>
+          <input id="withdraw-phone-input" type="tel" value="0712 889 410" class="w-full bg-obsidian border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-mpesa" />
+        </div>
+
+        <button type="button" id="confirm-withdraw-btn" data-action="confirm-withdraw" class="w-full py-3.5 rounded-xl bg-mpesa hover:bg-emerald-400 text-obsidian font-extrabold text-sm transition-all shadow-lg shadow-mpesa/25 cursor-pointer">
+          Send Instant Payout Now
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- FOOTER                                                                -->
+  <!-- ===================================================================== -->
+  <footer class="border-t border-white/10 bg-obsidian pt-12 pb-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+        <p class="text-slate-300 font-bold">Angaza — monetize your exclusive content in one payment.</p>
+        <p>Live conversion: 1 USD = 130 KES • 95% Creator Payout</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================================================================== -->
+  <!-- DELEGATED, ROCK-SOLID APPLICATION JAVASCRIPT                          -->
+  <!-- ===================================================================== -->
+  <script>
+    (function () {
+      'use strict';
+
+      const KES_PER_USD = 130;
+
+      // Application State
+      let currency = 'KES';
+      let selectedCategory = 'All Drops';
+      let unlockedDropIds = new Set([2]); // Drop #2 starts unlocked for instant playback testing
+      let activeModalDropId = null;
+      let activePayMethod = 'mpesa';
+
+      // Studio State
+      let studioTotalRevenueKES = 482500;
+      let studioTotalBuyers = 1148;
+      let studioAvailableBalanceKES = 164350;
+      let dailyRevenueKES = [42000, 56000, 49500, 71000, 68000, 94500, 101500];
+      let payoutReceipts = [
+        { id: 'MPX92K81LA', date: 'Nov 10, 2026', phone: '0712***410', amountKES: 85000 },
+        { id: 'MPX74B19QW', date: 'Nov 04, 2026', phone: '0712***410', amountKES: 112400 }
+      ];
+
+      // HD Canvas Player State
+      let playerAnimFrame = null;
+      let playerIsPlaying = true;
+      let playerProgress = 24;
+      let currentPlayerCoverImg = null;
+
+      // Thumbnail Upload State
+      let draftThumbnailDataUrl = '';
+      let samplePresetIndex = 0;
+
+      const categories = [
+        'All Drops',
+        'Music & Live Sets',
+        'Masterclasses & Tech',
+        'Comedy & Storytelling',
+        'Film & Docs',
+        'Podcasts & Exclusive'
+      ];
+
+      let drops = [
+        {
+          id: 1,
+          title: 'Building High-Scale Fintech APIs for East Africa',
+          creator: 'Wanjiku Kamau',
+          handle: '@wanjikudev',
+          initials: 'WK',
+          category: 'Masterclasses & Tech',
+          duration: '1:18:40',
+          buyersCount: 342,
+          priceKES: 850,
+          theme: 'gold',
+          thumbnailUrl: '',
+          description: 'Complete architecture masterclass on M-Pesa Daraja integrations, idempotent ledgers, and sub-second mobile settlement.'
+        },
+        {
+          id: 2,
+          title: 'Acoustic Sunset Session: Kilifi Creek Live Sessions',
+          creator: 'Sauti & The Tide',
+          handle: '@sautitide',
+          initials: 'ST',
+          category: 'Music & Live Sets',
+          duration: '44:15',
+          buyersCount: 519,
+          priceKES: 350,
+          theme: 'savannah',
+          thumbnailUrl: '',
+          description: 'Intimate 4K live performance recorded along Kilifi Creek blending coastal taarab strings with warm analog synths.'
+        },
+        {
+          id: 3,
+          title: 'Chasing Rain: Inside Turkana’s Wind & Solar Frontier',
+          creator: 'Otieno Cinema',
+          handle: '@otienofilms',
+          initials: 'OC',
+          category: 'Film & Docs',
+          duration: '56:10',
+          buyersCount: 289,
+          priceKES: 500,
+          theme: 'cobalt',
+          thumbnailUrl: '',
+          description: 'Award-winning independent documentary chronicling the engineers powering Kenya’s renewable energy corridor.'
+        },
+        {
+          id: 4,
+          title: 'Nairobi After Dark: Uncensored Stand-Up Special',
+          creator: 'Mammito & Friends',
+          handle: '@nairobicomedy',
+          initials: 'MF',
+          category: 'Comedy & Storytelling',
+          duration: '1:04:20',
+          buyersCount: 640,
+          priceKES: 400,
+          theme: 'savannah',
+          thumbnailUrl: '',
+          description: 'Full 90-minute live comedy special filmed at Alliance Française Nairobi with zero TV edits.'
+        },
+        {
+          id: 5,
+          title: 'Cinematography on a Shoestring: Natural Light in Nairobi',
+          creator: 'Jabari Mwangi',
+          handle: '@jabarishots',
+          initials: 'JM',
+          category: 'Masterclasses & Tech',
+          duration: '52:00',
+          buyersCount: 264,
+          priceKES: 650,
+          theme: 'emerald',
+          thumbnailUrl: '',
+          description: 'Learn how to shoot commercial-grade portraits and street scenes using affordable prime lenses and African golden-hour light.'
+        },
+        {
+          id: 6,
+          title: 'The Founders Table: Bootstrapping to $1M ARR in Africa',
+          creator: 'Savannah Tech Pod',
+          handle: '@savannahpod',
+          initials: 'SP',
+          category: 'Podcasts & Exclusive',
+          duration: '1:25:10',
+          buyersCount: 418,
+          priceKES: 300,
+          theme: 'gold',
+          thumbnailUrl: '',
+          description: 'Extended private roundtable with 4 East African founders sharing real revenue numbers, pitch decks, and lessons.'
+        }
+      ];
+
+      // Escape HTML Utility
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      // Format Currency Utility
+      function formatCurrency(amountKES) {
+        if (currency === 'KES') {
+          return 'KES ' + Math.round(amountKES).toLocaleString('en-US');
+        }
+        const usd = amountKES / KES_PER_USD;
+        const decimals = usd < 25 ? 2 : 0;
+        return '$' + usd.toLocaleString('en-US', {
+          minimumFractionDigits: decimals,
+          maximumFractionDigits: decimals
+        });
+      }
+
+      // Toast Notification Helper
+      function showToast(message, type) {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        const styles = {
+          success: 'border-mpesa/60 text-emerald-300',
+          error: 'border-rose-400/60 text-rose-300',
+          info: 'border-radiant/60 text-amber-200'
+        };
+
+        toast.className = 'pointer-events-auto bg-charcoal/95 backdrop-blur-md border ' +
+          (styles[type] || styles.info) +
+          ' rounded-2xl px-4 py-3 shadow-2xl flex items-center justify-between gap-3 text-xs sm:text-sm font-bold';
+
+        const textSpan = document.createElement('span');
+        textSpan.textContent = message;
+
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'text-slate-400 hover:text-white font-bold px-1 cursor-pointer';
+        closeBtn.textContent = '✕';
+        closeBtn.addEventListener('click', function () {
+          toast.remove();
+        });
+
+        toast.appendChild(textSpan);
+        toast.appendChild(closeBtn);
+        container.appendChild(toast);
+
+        setTimeout(function () {
+          if (toast.parentNode) toast.remove();
+        }, 4200);
+      }
+
+      // Switch Currency
+      function setCurrency(newCurr) {
+        currency = newCurr;
+        const kesBtn = document.getElementById('curr-btn-KES');
+        const usdBtn = document.getElementById('curr-btn-USD');
+
+        if (kesBtn && usdBtn) {
+          if (newCurr === 'KES') {
+            kesBtn.className = 'px-2.5 py-1.5 rounded-lg bg-radiant text-obsidian transition-all cursor-pointer';
+            usdBtn.className = 'px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white transition-all cursor-pointer';
+          } else {
+            usdBtn.className = 'px-2.5 py-1.5 rounded-lg bg-radiant text-obsidian transition-all cursor-pointer';
+            kesBtn.className = 'px-2.5 py-1.5 rounded-lg text-slate-300 hover:text-white transition-all cursor-pointer';
+          }
+        }
+
+        updateSimulator();
+        renderDropsGrid();
+        updateStudioDashboard();
+        syncThumbnailPreviewOverlay();
+        showToast('Currency switched to ' + newCurr, 'info');
+      }
+
+      // Switch View ('explore' | 'studio')
+      function switchView(viewName) {
+        const exploreEl = document.getElementById('view-explore');
+        const studioEl = document.getElementById('view-studio');
+        const tabExplore = document.getElementById('tab-explore');
+        const tabStudio = document.getElementById('tab-studio');
+        const mobExplore = document.getElementById('mob-tab-explore');
+        const mobStudio = document.getElementById('mob-tab-studio');
+
+        if (viewName === 'studio') {
+          exploreEl.classList.add('hidden');
+          studioEl.classList.remove('hidden');
+
+          tabStudio.className = 'px-4 py-2 rounded-xl text-sm font-extrabold bg-sunlit text-obsidian transition-all cursor-pointer';
+          tabExplore.className = 'px-4 py-2 rounded-xl text-sm font-bold text-slate-300 hover:text-white transition-all cursor-pointer';
+
+          mobStudio.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-sunlit text-obsidian text-center transition-all cursor-pointer';
+          mobExplore.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold bg-charcoal text-slate-300 border border-white/10 text-center transition-all cursor-pointer';
+
+          updateStudioDashboard();
+        } else {
+          studioEl.classList.add('hidden');
+          exploreEl.classList.remove('hidden');
+
+          tabExplore.className = 'px-4 py-2 rounded-xl text-sm font-extrabold bg-sunlit text-obsidian transition-all cursor-pointer';
+          tabStudio.className = 'px-4 py-2 rounded-xl text-sm font-bold text-slate-300 hover:text-white transition-all cursor-pointer';
+
+          mobExplore.className = 'flex-1 py-2.5 rounded-xl text-xs font-extrabold bg-sunlit text-obsidian text-center transition-all cursor-pointer';
+          mobStudio.className = 'flex-1 py-2.5 rounded-xl text-xs font-bold bg-charcoal text-slate-300 border border-white/10 text-center transition-all cursor-pointer';
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function goToPublishForm() {
+        switchView('studio');
+        setTimeout(function () {
+          const card = document.getElementById('publish-drop-card');
+          if (card) card.scrollIntoView({ behavior: 'smooth' });
+          const input = document.getElementById('drop-title-input');
+          if (input) input.focus();
+        }, 120);
+      }
+
+      // One-Payment Revenue Simulator
+      function updateSimulator() {
+        const buyersInput = document.getElementById('sim-buyers');
+        const priceInput = document.getElementById('sim-price');
+        if (!buyersInput || !priceInput) return;
+
+        const buyers = parseInt(buyersInput.value, 10);
+        const priceKES = parseInt(priceInput.value, 10);
+
+        const grossKES = buyers * priceKES;
+        const feeKES = Math.round(grossKES * 0.05);
+        const netKES = grossKES - feeKES;
+
+        document.getElementById('sim-buyers-label').textContent = buyers.toLocaleString('en-US') + ' supporters';
+        document.getElementById('sim-price-label').textContent = formatCurrency(priceKES);
+        document.getElementById('sim-min-hint').textContent = formatCurrency(100);
+        document.getElementById('sim-mid-hint').textContent = formatCurrency(2500);
+        document.getElementById('sim-max-hint').textContent = formatCurrency(5000);
+        document.getElementById('sim-gross').textContent = formatCurrency(grossKES);
+        document.getElementById('sim-fee').textContent = '- ' + formatCurrency(feeKES);
+        document.getElementById('sim-net').textContent = formatCurrency(netKES);
+      }
+
+      // Artwork Generator (Supports Uploaded Image or Geometric SVG Fallback)
+      function buildDropThumbnailHTML(drop) {
+        if (drop.thumbnailUrl) {
+          return (
+            '<div class="w-full h-full bg-obsidian relative overflow-hidden">' +
+              '<img src="' + escapeHtml(drop.thumbnailUrl) + '" alt="' + escapeHtml(drop.title) + '" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />' +
+              '<div class="absolute inset-0 bg-gradient-to-t from-obsidian/85 via-obsidian/15 to-black/25 pointer-events-none"></div>' +
+            '</div>'
+          );
+        }
+
+        const palettes = {
+          gold: { bg: 'from-amber-950 via-stone-900 to-obsidian', sun: '#FBBF24', ray: '#F59E0B', hill: '#1C1917' },
+          savannah: { bg: 'from-orange-950 via-amber-950 to-obsidian', sun: '#F97316', ray: '#FBBF24', hill: '#1F1510' },
+          emerald: { bg: 'from-emerald-950 via-teal-950 to-obsidian', sun: '#10B981', ray: '#FBBF24', hill: '#0D1B17' },
+          cobalt: { bg: 'from-indigo-950 via-slate-900 to-obsidian', sun: '#60A5FA', ray: '#F59E0B', hill: '#111524' }
+        };
+        const p = palettes[drop.theme] || palettes.gold;
+
+        return (
+          '<div class="w-full h-full bg-gradient-to-br ' + p.bg + ' relative overflow-hidden">' +
+            '<svg viewBox="0 0 400 225" class="w-full h-full object-cover pointer-events-none" xmlns="http://www.w3.org/2000/svg">' +
+              '<circle cx="288" cy="72" r="28" fill="' + p.sun + '" fill-opacity="0.88" />' +
+              '<circle cx="288" cy="72" r="46" stroke="' + p.ray + '" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="6 6" fill="none" />' +
+              '<path d="M0 155 L110 118 L225 148 L330 112 L400 135 L400 225 L0 225 Z" fill="' + p.hill + '" fill-opacity="0.88" />' +
+              '<path d="M0 182 Q100 162 200 182 T400 178 L400 225 L0 225 Z" fill="#0B0B0F" fill-opacity="0.92" />' +
+            '</svg>' +
+          '</div>'
+        );
+      }
+
+      // Render Category Pills
+      function renderCategoryPills() {
+        const container = document.getElementById('category-pills');
+        if (!container) return;
+
+        container.innerHTML = categories.map(function (cat) {
+          const active = cat === selectedCategory;
+          return (
+            '<button type="button" data-action="select-category" data-category="' + escapeHtml(cat) + '" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all cursor-pointer ' +
+              (active
+                ? 'bg-radiant text-obsidian shadow-lg shadow-sunlit/25'
+                : 'bg-charcoal text-slate-300 hover:text-white border border-white/10') +
+            '">' + escapeHtml(cat) + '</button>'
+          );
+        }).join('');
+      }
+
+      // Render Exclusive Drops Grid
+      function renderDropsGrid() {
+        const grid = document.getElementById('drops-grid');
+        if (!grid) return;
+
+        const searchEl = document.getElementById('drops-search');
+        const query = (searchEl ? searchEl.value : '').toLowerCase().trim();
+
+        const filtered = drops.filter(function (d) {
+          const matchCat = selectedCategory === 'All Drops' || d.category === selectedCategory;
+          const matchQuery = !query ||
+            d.title.toLowerCase().includes(query) ||
+            d.creator.toLowerCase().includes(query) ||
+            d.category.toLowerCase().includes(query);
+          return matchCat && matchQuery;
+        });
+
+        if (filtered.length === 0) {
+          grid.innerHTML =
+            '<div class="col-span-full bg-charcoal border border-white/10 rounded-3xl p-10 text-center">' +
+              '<p class="text-white font-bold text-base">No exclusive drops match your filter</p>' +
+              '<p class="text-slate-400 text-xs mt-1">Try clearing your search or selecting "All Drops".</p>' +
+            '</div>';
+          return;
+        }
+
+        grid.innerHTML = filtered.map(function (drop) {
+          const isUnlocked = unlockedDropIds.has(drop.id);
+          const badgeHtml = isUnlocked
+            ? '<span class="px-2.5 py-1 rounded-lg bg-mpesa/25 border border-mpesa/50 text-mpesa text-[11px] font-extrabold">✓ Unlocked • Owned</span>'
+            : '<span class="px-2.5 py-1 rounded-lg bg-radiant text-obsidian text-[11px] font-extrabold shadow">One-Time • ' + escapeHtml(formatCurrency(drop.priceKES)) + '</span>';
+
+          return (
+            '<article data-action="open-drop" data-id="' + drop.id + '" class="group bg-charcoal border ' + (isUnlocked ? 'border-mpesa/35' : 'border-white/10 hover:border-radiant/50') + ' rounded-3xl overflow-hidden cursor-pointer transition-all hover:-translate-y-1 flex flex-col justify-between">' +
+              '<div>' +
+                '<div class="relative aspect-video w-full overflow-hidden pointer-events-none">' +
+                  buildDropThumbnailHTML(drop) +
+                  '<div class="absolute top-3 left-3 z-10">' + badgeHtml + '</div>' +
+                  '<span class="absolute bottom-3 right-3 z-10 px-2 py-0.5 rounded-md bg-obsidian/90 text-white text-xs font-bold">' + escapeHtml(drop.duration) + '</span>' +
+                  '<div class="absolute inset-0 flex items-center justify-center bg-black/15 group-hover:bg-black/35 transition-all">' +
+                    '<div class="w-12 h-12 rounded-full ' + (isUnlocked ? 'bg-mpesa text-obsidian' : 'bg-obsidian/90 text-radiant border border-radiant/50') + ' flex items-center justify-center font-black text-base shadow-xl group-hover:scale-110 transition-transform">' +
+                      (isUnlocked ? '▶' : '🔒') +
+                    '</div>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="p-5 pointer-events-none">' +
+                  '<div class="flex items-center gap-2 text-xs font-semibold mb-1.5">' +
+                    '<span class="text-radiant">' + escapeHtml(drop.category) + '</span>' +
+                    '<span class="text-slate-600">•</span>' +
+                    '<span class="text-slate-400">' + drop.buyersCount.toLocaleString('en-US') + ' owners</span>' +
+                  '</div>' +
+                  '<h3 class="font-bold text-white text-base sm:text-lg leading-snug group-hover:text-radiant transition-colors">' + escapeHtml(drop.title) + '</h3>' +
+                '</div>' +
+              '</div>' +
+              '<div class="px-5 pb-5 pt-3 border-t border-white/5 flex items-center justify-between pointer-events-none">' +
+                '<div class="flex items-center gap-2.5">' +
+                  '<div class="w-8 h-8 rounded-full bg-gradient-to-br from-radiant to-amber-700 text-obsidian font-extrabold text-xs flex items-center justify-center">' +
+                    escapeHtml(drop.initials) +
+                  '</div>' +
+                  '<div>' +
+                    '<p class="text-xs font-bold text-slate-200">' + escapeHtml(drop.creator) + '</p>' +
+                    '<p class="text-[10px] text-slate-500">' + escapeHtml(drop.handle) + '</p>' +
+                  '</div>' +
+                '</div>' +
+                '<span class="text-xs font-extrabold ' + (isUnlocked ? 'text-mpesa' : 'text-radiant') + '">' +
+                  (isUnlocked ? 'Watch HD →' : 'Unlock →') +
+                '</span>' +
+              '</div>' +
+            '</article>'
+          );
+        }).join('');
+      }
+
+      // Open Drop Modal (Checkout if locked, HD Canvas Player if unlocked)
+      function openDropModal(dropId) {
+        const drop = drops.find(function (d) { return d.id === dropId; });
+        if (!drop) return;
+
+        activeModalDropId = dropId;
+        const modal = document.getElementById('drop-modal');
+        const badge = document.getElementById('modal-status-badge');
+        const title = document.getElementById('modal-drop-title');
+        const body = document.getElementById('modal-drop-body');
+
+        title.textContent = drop.title;
+        const isUnlocked = unlockedDropIds.has(drop.id);
+
+        if (isUnlocked) {
+          badge.className = 'px-2.5 py-1 rounded-lg text-[11px] font-extrabold uppercase bg-mpesa/20 text-mpesa shrink-0';
+          badge.textContent = 'Unlocked • Owned Forever';
+          renderHDPlayer(drop, body);
+        } else {
+          badge.className = 'px-2.5 py-1 rounded-lg text-[11px] font-extrabold uppercase bg-radiant text-obsidian shrink-0';
+          badge.textContent = 'One-Payment Unlock';
+          activePayMethod = 'mpesa';
+          renderCheckoutModal(drop, body);
+        }
+
+        modal.classList.add('is-open');
+      }
+
+      function closeDropModal() {
+        const modal = document.getElementById('drop-modal');
+        if (modal) modal.classList.remove('is-open');
+        if (playerAnimFrame) {
+          cancelAnimationFrame(playerAnimFrame);
+          playerAnimFrame = null;
+        }
+      }
+
+      // Render One-Payment Checkout Inside Modal
+      function renderCheckoutModal(drop, container) {
+        const priceFormatted = formatCurrency(drop.priceKES);
+
+        container.innerHTML =
+          '<div class="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">' +
+            '<div class="md:col-span-5 space-y-3.5">' +
+              '<div class="relative aspect-video rounded-2xl overflow-hidden border border-white/10">' +
+                buildDropThumbnailHTML(drop) +
+                '<div class="absolute inset-0 bg-obsidian/55 flex flex-col items-center justify-center p-4 text-center">' +
+                  '<div class="w-10 h-10 rounded-full bg-radiant/20 border border-radiant text-radiant flex items-center justify-center mb-1.5 font-bold">🔒</div>' +
+                  '<p class="text-xs font-extrabold text-white">' + escapeHtml(drop.duration) + ' Exclusive HD</p>' +
+                '</div>' +
+              '</div>' +
+              '<div class="bg-obsidian/90 border border-white/10 rounded-2xl p-4 space-y-1.5">' +
+                '<p class="text-xs font-extrabold text-radiant">∞ Pay once, own forever</p>' +
+                '<p class="text-xs text-slate-400 leading-relaxed">No recurring bills. 95% of your ' + escapeHtml(priceFormatted) + ' payment goes directly to <strong class="text-white">' + escapeHtml(drop.creator) + '</strong>.</p>' +
+              '</div>' +
+            '</div>' +
+            '<div class="md:col-span-7 space-y-4">' +
+              '<p class="text-xs text-slate-300 leading-relaxed">' + escapeHtml(drop.description) + '</p>' +
+              '<div class="grid grid-cols-2 gap-2 bg-obsidian p-1.5 rounded-2xl border border-white/10">' +
+                '<button type="button" id="paytab-mpesa" data-action="set-pay-method" data-method="mpesa" class="py-2.5 px-3 rounded-xl text-xs font-extrabold bg-mpesa text-obsidian transition-all cursor-pointer">M-Pesa Express</button>' +
+                '<button type="button" id="paytab-card" data-action="set-pay-method" data-method="card" class="py-2.5 px-3 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition-all cursor-pointer">Card / Apple Pay</button>' +
+              '</div>' +
+              '<div id="checkout-method-panel"></div>' +
+            '</div>' +
+          '</div>';
+
+        renderCheckoutMethodPanel(drop);
+      }
+
+      function renderCheckoutMethodPanel(drop) {
+        const panel = document.getElementById('checkout-method-panel');
+        if (!panel || !drop) return;
+        const priceFormatted = formatCurrency(drop.priceKES);
+
+        if (activePayMethod === 'mpesa') {
+          panel.innerHTML =
+            '<div class="bg-obsidian border border-mpesa/35 rounded-2xl p-4 sm:p-5 space-y-4">' +
+              '<div class="flex items-center justify-between">' +
+                '<span class="text-xs font-extrabold uppercase tracking-wider text-mpesa">Safaricom M-Pesa STK Push</span>' +
+                '<span class="text-sm font-black text-white">' + escapeHtml(priceFormatted) + '</span>' +
+              '</div>' +
+              '<div>' +
+                '<label for="stk-phone-input" class="block text-[11px] font-semibold text-slate-400 mb-1.5">Kenyan Mobile Number (07XX or 01XX)</label>' +
+                '<input id="stk-phone-input" type="tel" value="0712 345 678" placeholder="07XX XXX XXX" class="w-full bg-charcoal border border-white/15 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-mpesa" />' +
+              '</div>' +
+              '<div id="stk-status-box" class="hidden bg-charcoal border border-mpesa/35 rounded-xl p-3 text-xs text-emerald-300 font-semibold"></div>' +
+              '<button type="button" id="stk-submit-btn" data-action="confirm-payment" data-id="' + drop.id + '" class="w-full py-3.5 rounded-xl bg-mpesa hover:bg-emerald-400 text-obsidian font-extrabold text-sm transition-all shadow-lg shadow-mpesa/20 cursor-pointer">' +
+                'Pay & Unlock Forever (' + escapeHtml(priceFormatted) + ')' +
+              '</button>' +
+            '</div>';
+        } else {
+          panel.innerHTML =
+            '<div class="bg-obsidian border border-radiant/35 rounded-2xl p-4 sm:p-5 space-y-4">' +
+              '<div class="flex items-center justify-between">' +
+                '<span class="text-xs font-extrabold uppercase tracking-wider text-radiant">Global Card / Apple Pay</span>' +
+                '<span class="text-sm font-black text-white">' + escapeHtml(priceFormatted) + '</span>' +
+              '</div>' +
+              '<div class="space-y-2.5">' +
+                '<input type="text" value="4532 •••• •••• 8841" aria-label="Card number" class="w-full bg-charcoal border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-radiant" />' +
+                '<div class="grid grid-cols-2 gap-2.5">' +
+                  '<input type="text" value="09 / 29" aria-label="Expiry" class="w-full bg-charcoal border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-radiant" />' +
+                  '<input type="text" value="842" aria-label="CVC" class="w-full bg-charcoal border border-white/15 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-radiant" />' +
+                '</div>' +
+              '</div>' +
+              '<div id="stk-status-box" class="hidden bg-charcoal border border-radiant/35 rounded-xl p-3 text-xs text-amber-200 font-semibold"></div>' +
+              '<button type="button" id="stk-submit-btn" data-action="confirm-payment" data-id="' + drop.id + '" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-radiant to-sunlit hover:brightness-110 text-obsidian font-extrabold text-sm transition-all shadow-lg shadow-sunlit/20 cursor-pointer">' +
+                'Pay & Unlock Forever (' + escapeHtml(priceFormatted) + ')' +
+              '</button>' +
+            '</div>';
+        }
+      }
+
+      // Execute One-Payment Unlock Simulation
+      function executePaymentSimulation(dropId) {
+        const drop = drops.find(function (d) { return d.id === dropId; });
+        if (!drop) return;
+
+        const btn = document.getElementById('stk-submit-btn');
+        const statusBox = document.getElementById('stk-status-box');
+        if (btn) {
+          btn.disabled = true;
+          btn.classList.add('opacity-70');
+        }
+        if (statusBox) {
+          statusBox.classList.remove('hidden');
+        }
+
+        if (activePayMethod === 'mpesa') {
+          const phoneInput = document.getElementById('stk-phone-input');
+          const phoneVal = (phoneInput ? phoneInput.value : '0712 345 678').trim() || '0712 345 678';
+          if (statusBox) statusBox.textContent = '📲 Sending M-Pesa Express STK push to ' + phoneVal + '...';
+
+          setTimeout(function () {
+            if (statusBox) statusBox.textContent = '🔐 Prompt received on phone! Verifying M-Pesa PIN...';
+          }, 700);
+
+          setTimeout(function () {
+            finalizeDropUnlock(drop, 'M-Pesa Express');
+          }, 1500);
+        } else {
+          if (statusBox) statusBox.textContent = '💳 Authorizing instant one-time card settlement...';
+          setTimeout(function () {
+            finalizeDropUnlock(drop, 'Card / Apple Pay');
+          }, 1100);
+        }
+      }
+
+      function finalizeDropUnlock(drop, methodLabel) {
+        unlockedDropIds.add(drop.id);
+        drop.buyersCount += 1;
+
+        const creatorShareKES = Math.round(drop.priceKES * 0.95);
+        studioTotalRevenueKES += creatorShareKES;
+        studioAvailableBalanceKES += creatorShareKES;
+        studioTotalBuyers += 1;
+        dailyRevenueKES[dailyRevenueKES.length - 1] += creatorShareKES;
+
+        payoutReceipts.unshift({
+          id: 'UNL' + Math.random().toString(36).substring(2, 7).toUpperCase(),
+          date: 'Just now',
+          phone: drop.title.slice(0, 18) + '...',
+          amountKES: creatorShareKES
+        });
+
+        renderDropsGrid();
+        updateStudioDashboard();
+        showToast('Unlocked "' + drop.title + '" via ' + methodLabel + '! Owned forever.', 'success');
+        openDropModal(drop.id);
+      }
+
+      // Render Playable HD Canvas Player Inside Modal
+      function renderHDPlayer(drop, container) {
+        playerIsPlaying = true;
+        playerProgress = 24;
+
+        container.innerHTML =
+          '<div class="space-y-4">' +
+            '<div class="relative aspect-video w-full rounded-2xl overflow-hidden border border-radiant/35 bg-obsidian">' +
+              '<canvas id="angaza-player-canvas" class="w-full h-full block"></canvas>' +
+              '<div class="absolute top-3 left-3 pointer-events-none">' +
+                '<span class="px-2.5 py-1 rounded-lg bg-obsidian/85 border border-radiant/40 text-radiant text-[11px] font-extrabold">ANGAZA HD STREAM • 1080p60</span>' +
+              '</div>' +
+              '<div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/95 via-black/75 to-transparent p-3.5 sm:p-4 space-y-2">' +
+                '<input id="player-scrubber" type="range" min="0" max="100" value="24" class="w-full cursor-pointer" />' +
+                '<div class="flex items-center justify-between gap-3">' +
+                  '<div class="flex items-center gap-3">' +
+                    '<button type="button" id="player-play-btn" data-action="toggle-player-play" class="px-3.5 py-1.5 rounded-xl bg-radiant text-obsidian font-extrabold text-xs hover:bg-amber-300 cursor-pointer">Pause</button>' +
+                    '<span class="text-xs font-semibold text-slate-200">12:14 / ' + escapeHtml(drop.duration) + '</span>' +
+                  '</div>' +
+                  '<span class="text-[11px] font-bold text-mpesa">✓ Lifetime License Active</span>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+            '<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-obsidian border border-white/10 rounded-2xl p-4">' +
+              '<div>' +
+                '<p class="text-xs font-extrabold text-radiant">' + escapeHtml(drop.creator) + ' (' + escapeHtml(drop.handle) + ')</p>' +
+                '<p class="text-xs text-slate-300 mt-0.5">' + escapeHtml(drop.description) + '</p>' +
+              '</div>' +
+              '<div class="flex items-center gap-2 shrink-0">' +
+                '<button type="button" data-action="tip-creator" data-amount="100" class="px-3 py-2 rounded-xl bg-charcoal hover:bg-white/10 border border-radiant/40 text-radiant font-extrabold text-xs cursor-pointer">Tip ' + escapeHtml(formatCurrency(100)) + '</button>' +
+                '<button type="button" data-action="tip-creator" data-amount="500" class="px-3 py-2 rounded-xl bg-radiant hover:bg-amber-300 text-obsidian font-extrabold text-xs cursor-pointer">Tip ' + escapeHtml(formatCurrency(500)) + '</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+
+        startPlayerCanvasLoop(drop);
+      }
+
+      function startPlayerCanvasLoop(drop) {
+        if (playerAnimFrame) cancelAnimationFrame(playerAnimFrame);
+        const canvas = document.getElementById('angaza-player-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        currentPlayerCoverImg = null;
+        if (drop.thumbnailUrl) {
+          const img = new Image();
+          img.crossOrigin = 'anonymous';
+          img.onload = function () { currentPlayerCoverImg = img; };
+          img.src = drop.thumbnailUrl;
+        }
+
+        let tick = 0;
+        function draw() {
+          const rect = canvas.getBoundingClientRect();
+          if (canvas.width !== rect.width || canvas.height !== rect.height) {
+            canvas.width = rect.width || 640;
+            canvas.height = rect.height || 360;
+          }
+          const w = canvas.width;
+          const h = canvas.height;
+
+          if (currentPlayerCoverImg && currentPlayerCoverImg.complete && currentPlayerCoverImg.naturalWidth > 0) {
+            ctx.drawImage(currentPlayerCoverImg, 0, 0, w, h);
+            ctx.fillStyle = 'rgba(11, 11, 15, 0.56)';
+            ctx.fillRect(0, 0, w, h);
+          } else {
+            const grad = ctx.createRadialGradient(w * 0.5, h * 0.42, 15, w * 0.5, h * 0.5, w * 0.7);
+            grad.addColorStop(0, '#451A03');
+            grad.addColorStop(0.55, '#14141C');
+            grad.addColorStop(1, '#0B0B0F');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+          }
+
+          const cx = w * 0.5;
+          const cy = h * 0.42;
+          for (let i = 0; i < 4; i++) {
+            const r = 34 + i * 26 + Math.sin(tick * 0.035 + i) * 5;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(251, 191, 36, ' + (0.28 - i * 0.05) + ')';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+          }
+
+          const bars = 26;
+          const bw = Math.max(4, (w * 0.46) / bars);
+          const startX = cx - (bars * (bw + 3)) / 2;
+          for (let b = 0; b < bars; b++) {
+            const amp = playerIsPlaying ? Math.abs(Math.sin(tick * 0.08 + b * 0.45)) * 42 + 8 : 8;
+            ctx.fillStyle = b % 3 === 0 ? '#10B981' : '#FBBF24';
+            ctx.fillRect(startX + b * (bw + 3), cy - amp / 2, bw, amp);
+          }
+
+          ctx.fillStyle = 'rgba(248, 250, 252, 0.92)';
+          ctx.font = '700 13px "Plus Jakarta Sans", sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(drop.title, cx, cy + 56);
+
+          if (playerIsPlaying) {
+            tick += 1;
+            playerProgress = playerProgress >= 99 ? 0 : playerProgress + 0.03;
+            const scrubber = document.getElementById('player-scrubber');
+            if (scrubber) scrubber.value = Math.floor(playerProgress);
+          }
+
+          playerAnimFrame = requestAnimationFrame(draw);
+        }
+
+        draw();
+      }
+
+      // Studio Dashboard Renderer
+      function updateStudioDashboard() {
+        const revEl = document.getElementById('kpi-total-revenue');
+        const buyEl = document.getElementById('kpi-buyers');
+        const balEl = document.getElementById('kpi-available-balance');
+        if (revEl) revEl.textContent = formatCurrency(studioTotalRevenueKES);
+        if (buyEl) buyEl.textContent = studioTotalBuyers.toLocaleString('en-US');
+        if (balEl) balEl.textContent = formatCurrency(studioAvailableBalanceKES);
+
+        const chartEl = document.getElementById('studio-revenue-chart');
+        if (chartEl) {
+          const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Today'];
+          const maxVal = Math.max.apply(null, dailyRevenueKES.concat([1]));
+          chartEl.innerHTML = dailyRevenueKES.map(function (val, idx) {
+            const pct = Math.max(14, Math.round((val / maxVal) * 100));
+            const isToday = idx === 6;
+            return (
+              '<div class="flex flex-col items-center justify-end h-full gap-1.5">' +
+                '<span class="text-[9px] sm:text-[10px] font-bold text-slate-400 truncate max-w-full">' + escapeHtml(formatCurrency(val)) + '</span>' +
+                '<div class="w-full rounded-t-xl transition-all duration-300 ' + (isToday ? 'bg-gradient-to-t from-sunlit to-radiant' : 'bg-white/15 hover:bg-radiant/60') + '" style="height: ' + pct + '%"></div>' +
+                '<span class="text-[10px] font-bold ' + (isToday ? 'text-radiant' : 'text-slate-500') + '">' + days[idx] + '</span>' +
+              '</div>'
+            );
+          }).join('');
+        }
+
+        const listEl = document.getElementById('payout-receipts-list');
+        if (listEl) {
+          listEl.innerHTML = payoutReceipts.slice(0, 4).map(function (r) {
+            return (
+              '<div class="flex items-center justify-between bg-obsidian/90 border border-white/5 rounded-xl px-3.5 py-2.5">' +
+                '<div class="flex items-center gap-2 min-w-0">' +
+                  '<span class="w-2 h-2 rounded-full bg-mpesa shrink-0"></span>' +
+                  '<span class="font-bold text-white shrink-0">' + escapeHtml(r.id) + '</span>' +
+                  '<span class="text-slate-400 truncate">(' + escapeHtml(r.phone) + ')</span>' +
+                '</div>' +
+                '<span class="font-extrabold text-mpesa shrink-0">' + escapeHtml(formatCurrency(r.amountKES)) + '</span>' +
+              '</div>'
+            );
+          }).join('');
+        }
+      }
+
+      // ===================================================================
+      // THUMBNAIL UPLOAD, URL PASTE & SAMPLE COVER PRESET HELPERS
+      // ===================================================================
+      function setThumbnailPreview(src) {
+        draftThumbnailDataUrl = src;
+        const emptyEl = document.getElementById('thumbnail-empty-state');
+        const previewEl = document.getElementById('thumbnail-preview-state');
+        const imgEl = document.getElementById('thumbnail-preview-img');
+        if (imgEl) imgEl.src = src;
+        if (emptyEl) emptyEl.classList.add('hidden');
+        if (previewEl) previewEl.classList.remove('hidden');
+        syncThumbnailPreviewOverlay();
+      }
+
+      function clearUploadedThumbnail(keepUrlInput) {
+        draftThumbnailDataUrl = '';
+        const fileInput = document.getElementById('drop-thumbnail-file');
+        const urlInput = document.getElementById('drop-thumbnail-url');
+        const emptyEl = document.getElementById('thumbnail-empty-state');
+        const previewEl = document.getElementById('thumbnail-preview-state');
+        const imgEl = document.getElementById('thumbnail-preview-img');
+
+        if (fileInput) fileInput.value = '';
+        if (urlInput && !keepUrlInput) urlInput.value = '';
+        if (imgEl) imgEl.src = '';
+        if (previewEl) previewEl.classList.add('hidden');
+        if (emptyEl) emptyEl.classList.remove('hidden');
+      }
+
+      function syncThumbnailPreviewOverlay() {
+        const titleInput = document.getElementById('drop-title-input');
+        const priceInput = document.getElementById('drop-price-input');
+        const badgeEl = document.getElementById('preview-price-badge');
+        const titleEl = document.getElementById('preview-title-overlay');
+
+        const titleVal = titleInput ? titleInput.value.trim() : '';
+        const priceVal = parseInt(priceInput ? priceInput.value : '450', 10);
+
+        if (badgeEl) {
+          badgeEl.textContent = 'One-Time Unlock • ' + formatCurrency(isNaN(priceVal) ? 450 : priceVal);
+        }
+        if (titleEl) {
+          titleEl.textContent = titleVal || 'Your Exclusive Drop Cover';
+        }
+      }
+
+      function processImageFile(file) {
+        if (!file || !file.type || !file.type.startsWith('image/')) {
+          showToast('Please select a valid image file (PNG, JPG, or WEBP).', 'error');
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = function (ev) {
+          if (ev.target && typeof ev.target.result === 'string') {
+            setThumbnailPreview(ev.target.result);
+            showToast('Cover image "' + file.name + '" uploaded!', 'success');
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function applySampleCoverPreset() {
+        const presets = [
+          { label: 'Nairobi Skyline Sunset', c1: '#78350F', c2: '#F59E0B', tag: 'EXCLUSIVE 4K DROP' },
+          { label: 'Kilifi Acoustic Sessions', c1: '#064E3B', c2: '#10B981', tag: 'LIVE STUDIO SESSION' },
+          { label: 'Afro-Tech Masterclass', c1: '#1E1B4B', c2: '#FBBF24', tag: 'CREATOR MASTERCLASS' }
+        ];
+        const preset = presets[samplePresetIndex % presets.length];
+        samplePresetIndex += 1;
+
+        const canvas = document.createElement('canvas');
+        canvas.width = 960;
+        canvas.height = 540;
+        const ctx = canvas.getContext('2d');
+
+        const grad = ctx.createLinearGradient(0, 0, 960, 540);
+        grad.addColorStop(0, preset.c1);
+        grad.addColorStop(0.55, '#18181B');
+        grad.addColorStop(1, '#0B0B0F');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, 960, 540);
+
+        const glow = ctx.createRadialGradient(720, 175, 20, 720, 175, 260);
+        glow.addColorStop(0, preset.c2);
+        glow.addColorStop(1, 'rgba(11, 11, 15, 0)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, 960, 540);
+
+        ctx.fillStyle = 'rgba(11, 11, 15, 0.88)';
+        ctx.beginPath();
+        ctx.moveTo(0, 410);
+        ctx.lineTo(240, 310);
+        ctx.lineTo(490, 375);
+        ctx.lineTo(760, 275);
+        ctx.lineTo(960, 345);
+        ctx.lineTo(960, 540);
+        ctx.lineTo(0, 540);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(251, 191, 36, 0.95)';
+        ctx.font = '800 24px "Plus Jakarta Sans", sans-serif';
+        ctx.fillText(preset.tag, 54, 465);
+
+        setThumbnailPreview(canvas.toDataURL('image/png'));
+        showToast('Applied sample cover: "' + preset.label + '"', 'info');
+      }
+
+      // ===================================================================
+      // CENTRALIZED DELEGATED EVENT LISTENERS (ZERO INLINE ONCLICK)
+      // ===================================================================
+      function initApp() {
+        updateSimulator();
+        renderCategoryPills();
+        renderDropsGrid();
+        updateStudioDashboard();
+
+        // Global Delegated Click Listener
+        document.addEventListener('click', function (e) {
+          const target = e.target.closest('[data-action]');
+          if (!target) {
+            // Close modals if clicking directly on dark backdrop
+            if (e.target && e.target.id === 'drop-modal') closeDropModal();
+            if (e.target && e.target.id === 'withdraw-modal') {
+              document.getElementById('withdraw-modal').classList.remove('is-open');
+            }
+            return;
+          }
+
+          const action = target.getAttribute('data-action');
+
+          if (action === 'switch-view') {
+            switchView(target.getAttribute('data-view') || 'explore');
+          } else if (action === 'set-currency') {
+            setCurrency(target.getAttribute('data-currency') || 'KES');
+          } else if (action === 'go-publish') {
+            goToPublishForm();
+          } else if (action === 'scroll-catalog') {
+            const catEl = document.getElementById('drops-marketplace');
+            if (catEl) catEl.scrollIntoView({ behavior: 'smooth' });
+          } else if (action === 'select-category') {
+            selectedCategory = target.getAttribute('data-category') || 'All Drops';
+            renderCategoryPills();
+            renderDropsGrid();
+          } else if (action === 'open-drop') {
+            const dropId = parseInt(target.getAttribute('data-id'), 10);
+            if (!isNaN(dropId)) openDropModal(dropId);
+          } else if (action === 'close-drop-modal') {
+            closeDropModal();
+          } else if (action === 'set-pay-method') {
+            activePayMethod = target.getAttribute('data-method') || 'mpesa';
+            const mpesaBtn = document.getElementById('paytab-mpesa');
+            const cardBtn = document.getElementById('paytab-card');
+            if (mpesaBtn && cardBtn) {
+              if (activePayMethod === 'mpesa') {
+                mpesaBtn.className = 'py-2.5 px-3 rounded-xl text-xs font-extrabold bg-mpesa text-obsidian transition-all cursor-pointer';
+                cardBtn.className = 'py-2.5 px-3 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition-all cursor-pointer';
+              } else {
+                cardBtn.className = 'py-2.5 px-3 rounded-xl text-xs font-extrabold bg-radiant text-obsidian transition-all cursor-pointer';
+                mpesaBtn.className = 'py-2.5 px-3 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition-all cursor-pointer';
+              }
+            }
+            const drop = drops.find(function (d) { return d.id === activeModalDropId; });
+            renderCheckoutMethodPanel(drop);
+          } else if (action === 'confirm-payment') {
+            const dropId = parseInt(target.getAttribute('data-id'), 10);
+            if (!isNaN(dropId)) executePaymentSimulation(dropId);
+          } else if (action === 'toggle-player-play') {
+            playerIsPlaying = !playerIsPlaying;
+            target.textContent = playerIsPlaying ? 'Pause' : 'Play';
+          } else if (action === 'tip-creator') {
+            const tipKES = parseInt(target.getAttribute('data-amount') || '100', 10);
+            const netTip = Math.round(tipKES * 0.95);
+            studioTotalRevenueKES += netTip;
+            studioAvailableBalanceKES += netTip;
+            dailyRevenueKES[dailyRevenueKES.length - 1] += netTip;
+            updateStudioDashboard();
+            showToast('Sent ' + formatCurrency(tipKES) + ' creator tip!', 'success');
+          } else if (action === 'withdraw-mpesa') {
+            const wModal = document.getElementById('withdraw-modal');
+            const wBal = document.getElementById('withdraw-modal-balance');
+            if (wBal) wBal.textContent = formatCurrency(studioAvailableBalanceKES);
+            if (wModal) wModal.classList.add('is-open');
+          } else if (action === 'close-withdraw-modal') {
+            const wModal = document.getElementById('withdraw-modal');
+            if (wModal) wModal.classList.remove('is-open');
+          } else if (action === 'confirm-withdraw') {
+            if (studioAvailableBalanceKES <= 0) {
+              showToast('Your M-Pesa balance is already settled.', 'info');
+              document.getElementById('withdraw-modal').classList.remove('is-open');
+              return;
+            }
+            const phone = (document.getElementById('withdraw-phone-input')?.value || '0712 889 410').trim();
+            const amount = studioAvailableBalanceKES;
+            const ref = 'MPX' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            payoutReceipts.unshift({
+              id: ref,
+              date: 'Just now',
+              phone: phone.slice(0, 4) + '***' + phone.slice(-3),
+              amountKES: amount
+            });
+            studioAvailableBalanceKES = 0;
+            document.getElementById('withdraw-modal').classList.remove('is-open');
+            updateStudioDashboard();
+            showToast('Sent ' + formatCurrency(amount) + ' to ' + phone + ' (Ref: ' + ref + ')!', 'success');
+          } else if (action === 'pick-cover-file') {
+            const fileEl = document.getElementById('drop-thumbnail-file');
+            if (fileEl) fileEl.click();
+          } else if (action === 'clear-cover') {
+            clearUploadedThumbnail(false);
+          } else if (action === 'apply-sample-cover') {
+            applySampleCoverPreset();
+          } else if (action === 'toggle-url-input') {
+            const drawer = document.getElementById('thumbnail-url-drawer');
+            if (drawer) {
+              drawer.classList.toggle('hidden');
+              if (!drawer.classList.contains('hidden')) {
+                document.getElementById('drop-thumbnail-url')?.focus();
+              }
+            }
+          } else if (action === 'close-url-input') {
+            document.getElementById('thumbnail-url-drawer')?.classList.add('hidden');
+          }
+        });
+
+        // Delegated Input & Change Listeners
+        document.addEventListener('input', function (e) {
+          const id = e.target && e.target.id;
+          if (id === 'sim-buyers' || id === 'sim-price') {
+            updateSimulator();
+          } else if (id === 'drops-search') {
+            renderDropsGrid();
+          } else if (id === 'player-scrubber') {
+            playerProgress = parseFloat(e.target.value) || 0;
+          } else if (id === 'drop-title-input' || id === 'drop-price-input') {
+            syncThumbnailPreviewOverlay();
+          } else if (id === 'drop-thumbnail-url') {
+            const urlVal = e.target.value.trim();
+            if (!urlVal) {
+              clearUploadedThumbnail(true);
+            } else if (/^https?:\/\/.+/i.test(urlVal)) {
+              setThumbnailPreview(urlVal);
+            }
+          }
+        });
+
+        // Native File Picker Change Listener
+        const fileInput = document.getElementById('drop-thumbnail-file');
+        if (fileInput) {
+          fileInput.addEventListener('change', function (e) {
+            const file = e.target.files && e.target.files[0];
+            if (file) processImageFile(file);
+          });
+        }
+
+        // Preview Image Load Error Handler
+        const previewImg = document.getElementById('thumbnail-preview-img');
+        if (previewImg) {
+          previewImg.addEventListener('error', function () {
+            if (draftThumbnailDataUrl) {
+              showToast('Could not load image URL. Try uploading a local image or using Sample Cover.', 'error');
+              clearUploadedThumbnail(true);
+            }
+          });
+        }
+
+        // Drag & Drop Cover Image Support
+        const dropzone = document.getElementById('thumbnail-dropzone');
+        if (dropzone) {
+          dropzone.addEventListener('dragover', function (e) {
+            e.preventDefault();
+            dropzone.classList.add('border-radiant', 'bg-radiant/10');
+          });
+          dropzone.addEventListener('dragleave', function (e) {
+            e.preventDefault();
+            dropzone.classList.remove('border-radiant', 'bg-radiant/10');
+          });
+          dropzone.addEventListener('drop', function (e) {
+            e.preventDefault();
+            dropzone.classList.remove('border-radiant', 'bg-radiant/10');
+            const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+            if (file) processImageFile(file);
+          });
+        }
+
+        // Publish New Exclusive Drop Form Submit
+        const publishForm = document.getElementById('publishForm');
+        if (publishForm) {
+          publishForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const title = document.getElementById('drop-title-input').value.trim();
+            const category = document.getElementById('drop-category-input').value;
+            const priceKES = parseInt(document.getElementById('drop-price-input').value || '450', 10);
+            const theme = document.getElementById('drop-theme-input').value;
+            const desc = document.getElementById('drop-desc-input').value.trim() ||
+              'Exclusive one-payment release published directly from Angaza Creator Studio.';
+
+            if (!title) return;
+
+            const newDrop = {
+              id: Date.now(),
+              title: title,
+              creator: 'Angaza Originals (You)',
+              handle: '@angazaoriginals',
+              initials: 'AO',
+              category: category,
+              duration: '28:45',
+              buyersCount: 1,
+              priceKES: isNaN(priceKES) ? 450 : priceKES,
+              theme: theme,
+              thumbnailUrl: draftThumbnailDataUrl || '',
+              description: desc
+            };
+
+            drops.unshift(newDrop);
+            publishForm.reset();
+            clearUploadedThumbnail(false);
+
+            selectedCategory = 'All Drops';
+            renderCategoryPills();
+            renderDropsGrid();
+            switchView('explore');
+            showToast('"' + title + '" is now live in Explore Exclusive Drops!', 'success');
+
+            setTimeout(function () {
+              const catalog = document.getElementById('drops-marketplace');
+              if (catalog) catalog.scrollIntoView({ behavior: 'smooth' });
+            }, 250);
+          });
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initApp);
+      } else {
+        initApp();
+      }
+    })();
+  </script>
+</body>
+</html>
+```
